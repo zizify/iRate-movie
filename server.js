@@ -3,30 +3,18 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const morgan = require('morgan');
 const passport = require('passport');
-
-// Here we use destructuring assignment with renaming so the two variables
-// called router (from ./users and ./auth) have different names
-// For example:
-// const actorSurnames = { james: "Stewart", robert: "De Niro" };
-// const { james: jimmy, robert: bobby } = actorSurnames;
-// console.log(jimmy); // Stewart - the variable name is jimmy, not james
-// console.log(bobby); // De Niro - the variable name is bobby, not robert
-const {router: usersRouter} = require('./users');
-const {router: authRouter, basicStrategy, jwtStrategy} = require('./auth');
-
+const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-const {PORT, DATABASE_URL} = require('./config');
+const { router: usersRouter } = require('./users');
+const { router: authRouter, basicStrategy, jwtStrategy } = require('./auth');
+const { PORT, DATABASE_URL } = require('./config');
 
 const app = express();
 
-// Logging
 app.use(morgan('common'));
-
-// CORS
 app.use(cors());
 
 app.use(passport.initialize());
@@ -36,25 +24,17 @@ passport.use(jwtStrategy);
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
 
-// A protected endpoint which needs a valid JWT to access it
-app.get(
-  '/api/protected',
-  passport.authenticate('jwt', {session: false}),
-  (req, res) => {
-    return res.json({
-      data: 'rosebud'
-    });
-  }
+const jwtAuth = passport.authenticate('jwt', { session: false });
+app.get('/api/protected', jwtAuth, (req, res) => {
+  return res.json({ data: 'rosebud' });
+}
 );
 
 app.use('*', (req, res) => {
-  return res.status(404).json({message: 'Not Found'});
+  return res.status(404).json({ message: 'Not Found' });
 });
 
-// Referenced by both runServer and closeServer. closeServer
-// assumes runServer has run and set `server` to a server object
 let server;
-
 function runServer() {
   return new Promise((resolve, reject) => {
     mongoose.connect(DATABASE_URL, err => {
@@ -92,4 +72,4 @@ if (require.main === module) {
   runServer().catch(err => console.error(err));
 }
 
-module.exports = {app, runServer, closeServer};
+module.exports = { app, runServer, closeServer };

@@ -1,25 +1,17 @@
 'use strict';
 
-const {BasicStrategy} = require('passport-http');
-const {
-  // Assigns the Strategy export to the name JwtStrategy using object
-  // destructuring
-  // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Assigning_to_new_variable_names
-  Strategy: JwtStrategy,
-  ExtractJwt
-} = require('passport-jwt');
+const { BasicStrategy } = require('passport-http');
+const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 
-const {User} = require('../users/models');
-const {JWT_SECRET} = require('../config');
+const { User } = require('../users/models');
+const { JWT_SECRET } = require('../config');
 
 const basicStrategy = new BasicStrategy((username, password, callback) => {
   let user;
-  User.findOne({username: username})
+  User.findOne({ username: username })
     .then(_user => {
       user = _user;
       if (!user) {
-        // Return a rejected promise so we break out of the chain of .thens.
-        // Any errors like this will be handled in the catch block.
         return Promise.reject({
           reason: 'LoginError',
           message: 'Incorrect username or password'
@@ -47,9 +39,7 @@ const basicStrategy = new BasicStrategy((username, password, callback) => {
 const jwtStrategy = new JwtStrategy(
   {
     secretOrKey: JWT_SECRET,
-    // Look for the JWT as a Bearer auth header
     jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
-    // Only allow HS256 tokens - the same as the ones we issue
     algorithms: ['HS256']
   },
   (payload, done) => {
@@ -57,4 +47,4 @@ const jwtStrategy = new JwtStrategy(
   }
 );
 
-module.exports = {basicStrategy, jwtStrategy};
+module.exports = { basicStrategy, jwtStrategy };
