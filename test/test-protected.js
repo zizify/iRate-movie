@@ -69,7 +69,7 @@ describe('Protected endpoint', function() {
         },
         'wrongSecret',
         {
-          algorithm: 'HS256',
+          // algorithm: 'HS256',
           expiresIn: '7d'
         }
       );
@@ -102,7 +102,7 @@ describe('Protected endpoint', function() {
         },
         JWT_SECRET,
         {
-          algorithm: 'HS256',
+          // algorithm: 'HS256',
           subject: username
         }
       );
@@ -134,7 +134,7 @@ describe('Protected endpoint', function() {
         },
         JWT_SECRET,
         {
-          algorithm: 'HS256',
+          // algorithm: 'HS256',
           subject: username,
           expiresIn: '7d'
         }
