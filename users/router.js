@@ -103,10 +103,5 @@ router.post('/', jsonParser, (req, res) => {
     });
 });
 
-router.get('/', (req, res) => {
-  return User.find()
-    .then(users => res.json(users.map(user => user.apiRepr())))
-    .catch(err => res.status(500).json({ message: 'Internal server error' }));
-});
 
 module.exports = { router };
