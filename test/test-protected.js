@@ -5,45 +5,38 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const jwt = require('jsonwebtoken');
 
-const {app, runServer, closeServer} = require('../server');
-const {User} = require('../users');
-const {JWT_SECRET} = require('../config');
+const { app, runServer, closeServer } = require('../server');
+const { User } = require('../users');
+const { JWT_SECRET } = require('../config');
 
 const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Protected endpoint', function() {
+describe('Protected endpoint', function () {
   const username = 'exampleUser';
   const password = 'examplePass';
-  const firstName = 'Example';
-  const lastName = 'User';
 
-  before(function() {
+  before(function () {
     return runServer();
   });
 
-  after(function() {
+  after(function () {
     return closeServer();
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     return User.hashPassword(password).then(password =>
-      User.create({
-        username,
-        password,
-        firstName,
-        lastName
-      })
+      User.create({ username, password })
     );
   });
 
-  afterEach(function() {
+  afterEach(function () {
     return User.remove({});
   });
 
-  describe('/api/protected', function() {
-    it('Should reject requests with no credentials', function() {
+  describe('/api/protected', function () {
+    it('Should reject requests with no credentials', function () {
       return chai
         .request(app)
         .get('/api/protected')
@@ -60,13 +53,9 @@ describe('Protected endpoint', function() {
         });
     });
 
-    it('Should reject requests with an invalid token', function() {
+    it('Should reject requests with an invalid token', function () {
       const token = jwt.sign(
-        {
-          username,
-          firstName,
-          lastName
-        },
+        { username },
         'wrongSecret',
         {
           // algorithm: 'HS256',
@@ -90,14 +79,10 @@ describe('Protected endpoint', function() {
           expect(res).to.have.status(401);
         });
     });
-    it('Should reject requests with an expired token', function() {
+    it('Should reject requests with an expired token', function () {
       const token = jwt.sign(
         {
-          user: {
-            username,
-            firstName,
-            lastName
-          },
+          user: { username },
           exp: Math.floor(Date.now() / 1000) - 10 // Expired ten seconds ago
         },
         JWT_SECRET,
@@ -123,14 +108,10 @@ describe('Protected endpoint', function() {
           expect(res).to.have.status(401);
         });
     });
-    it('Should send protected data', function() {
+    it('Should send protected data', function () {
       const token = jwt.sign(
         {
-          user: {
-            username,
-            firstName,
-            lastName
-          }
+          user: { username }
         },
         JWT_SECRET,
         {

@@ -22,7 +22,7 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
 
-  const stringFields = ['username', 'password', 'firstName', 'lastName'];
+  const stringFields = ['username', 'password'];
   const nonStringField = stringFields.find(
     field => field in req.body && typeof req.body[field] !== 'string'
   );
@@ -68,17 +68,13 @@ router.post('/', jsonParser, (req, res) => {
       code: 422,
       reason: 'ValidationError',
       message: tooSmallField
-        ? `Must be at least ${sizedFields[tooSmallField]
-          .min} characters long`
-        : `Must be at most ${sizedFields[tooLargeField]
-          .max} characters long`,
+        ? `Must be at least ${sizedFields[tooSmallField].min} characters long`
+        : `Must be at most ${sizedFields[tooLargeField].max} characters long`,
       location: tooSmallField || tooLargeField
     });
   }
 
-  let { username, password, firstName = '', lastName = '' } = req.body;
-  firstName = firstName.trim();
-  lastName = lastName.trim();
+  let { username, password } = req.body;
 
   return User.find({ username })
     .count()
@@ -94,12 +90,7 @@ router.post('/', jsonParser, (req, res) => {
       return User.hashPassword(password);
     })
     .then(hash => {
-      return User.create({
-        username,
-        password: hash,
-        firstName,
-        lastName
-      });
+      return User.create({ username, password: hash });
     })
     .then(user => {
       return res.status(201).json(user.apiRepr());

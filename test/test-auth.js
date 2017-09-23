@@ -5,45 +5,38 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const jwt = require('jsonwebtoken');
 
-const {app, runServer, closeServer} = require('../server');
-const {User} = require('../users');
-const {JWT_SECRET} = require('../config');
+const { app, runServer, closeServer } = require('../server');
+const { User } = require('../users');
+const { JWT_SECRET } = require('../config');
 
 const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Auth endpoints', function() {
+describe('Auth endpoints', function () {
   const username = 'exampleUser';
   const password = 'examplePass';
-  const firstName = 'Example';
-  const lastName = 'User';
 
-  before(function() {
+  before(function () {
     return runServer();
   });
 
-  after(function() {
+  after(function () {
     return closeServer();
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     return User.hashPassword(password).then(password =>
-      User.create({
-        username,
-        password,
-        firstName,
-        lastName
-      })
+      User.create({ username, password })
     );
   });
 
-  afterEach(function() {
+  afterEach(function () {
     return User.remove({});
   });
 
-  describe('/api/auth/login', function() {
-    it('Should reject requests with no credentials', function() {
+  describe('/api/auth/login', function () {
+    it('Should reject requests with no credentials', function () {
       return chai
         .request(app)
         .post('/api/auth/login')
@@ -59,7 +52,7 @@ describe('Auth endpoints', function() {
           expect(res).to.have.status(401);
         });
     });
-    it('Should reject requests with incorrect usernames', function() {
+    it('Should reject requests with incorrect usernames', function () {
       return chai
         .request(app)
         .post('/api/auth/login')
@@ -76,7 +69,7 @@ describe('Auth endpoints', function() {
           expect(res).to.have.status(401);
         });
     });
-    it('Should reject requests with incorrect passwords', function() {
+    it('Should reject requests with incorrect passwords', function () {
       return chai
         .request(app)
         .post('/api/auth/login')
@@ -93,7 +86,7 @@ describe('Auth endpoints', function() {
           expect(res).to.have.status(401);
         });
     });
-    it('Should return a valid auth token', function() {
+    it('Should return a valid auth token', function () {
       return chai
         .request(app)
         .post('/api/auth/login')
@@ -106,17 +99,13 @@ describe('Auth endpoints', function() {
           const payload = jwt.verify(token, JWT_SECRET, {
             // algorithm: ['HS256']
           });
-          expect(payload.user).to.deep.equal({
-            username,
-            firstName,
-            lastName
-          });
+          expect(payload.user).to.deep.equal({ username });
         });
     });
   });
 
-  describe('/api/auth/refresh', function() {
-    it('Should reject requests with no credentials', function() {
+  describe('/api/auth/refresh', function () {
+    it('Should reject requests with no credentials', function () {
       return chai
         .request(app)
         .post('/api/auth/refresh')
@@ -132,13 +121,9 @@ describe('Auth endpoints', function() {
           expect(res).to.have.status(401);
         });
     });
-    it('Should reject requests with an invalid token', function() {
+    it('Should reject requests with an invalid token', function () {
       const token = jwt.sign(
-        {
-          username,
-          firstName,
-          lastName
-        },
+        { username },
         'wrongSecret',
         {
           // algorithm: 'HS256',
@@ -162,14 +147,10 @@ describe('Auth endpoints', function() {
           expect(res).to.have.status(401);
         });
     });
-    it('Should reject requests with an expired token', function() {
+    it('Should reject requests with an expired token', function () {
       const token = jwt.sign(
         {
-          user: {
-            username,
-            firstName,
-            lastName
-          },
+          user: { username },
           exp: Math.floor(Date.now() / 1000) - 10 // Expired ten seconds ago
         },
         JWT_SECRET,
@@ -195,14 +176,10 @@ describe('Auth endpoints', function() {
           expect(res).to.have.status(401);
         });
     });
-    it('Should return a valid auth token with a newer expiry date', function() {
+    it('Should return a valid auth token with a newer expiry date', function () {
       const token = jwt.sign(
         {
-          user: {
-            username,
-            firstName,
-            lastName
-          }
+          user: { username }
         },
         JWT_SECRET,
         {
@@ -225,11 +202,7 @@ describe('Auth endpoints', function() {
           const payload = jwt.verify(token, JWT_SECRET, {
             // algorithm: ['HS256']
           });
-          expect(payload.user).to.deep.equal({
-            username,
-            firstName,
-            lastName
-          });
+          expect(payload.user).to.deep.equal({ username });
           expect(payload.exp).to.be.at.least(decoded.exp);
         });
     });
