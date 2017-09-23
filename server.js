@@ -18,7 +18,7 @@ const app = express();
 passport.use(basicStrategy);
 passport.use(jwtStrategy);
 
-app.use(morgan('common'));
+app.use(morgan('common', { skip: () => process.env.NODE_ENV === 'test' }));
 app.use(cors());
 
 app.use('/api/users/', usersRouter);

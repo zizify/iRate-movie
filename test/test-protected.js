@@ -1,6 +1,7 @@
 'use strict';
 
 global.DATABASE_URL = 'mongodb://localhost/jwt-auth-demo-test';
+process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const jwt = require('jsonwebtoken');
