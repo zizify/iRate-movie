@@ -4,6 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const path = require('path');
 const passport = require('passport');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -20,6 +21,8 @@ passport.use(jwtStrategy);
 
 app.use(morgan('common', { skip: () => process.env.NODE_ENV === 'test' }));
 app.use(cors());
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
