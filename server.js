@@ -11,24 +11,22 @@ mongoose.Promise = global.Promise;
 const { router: usersRouter } = require('./users');
 const { router: authRouter, basicStrategy, jwtStrategy } = require('./auth');
 const { PORT, DATABASE_URL } = require('./config');
+const jwtAuth = passport.authenticate('jwt', { session: false });
 
 const app = express();
+
+passport.use(basicStrategy);
+passport.use(jwtStrategy);
 
 app.use(morgan('common'));
 app.use(cors());
 
-app.use(passport.initialize());
-passport.use(basicStrategy);
-passport.use(jwtStrategy);
-
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
 
-const jwtAuth = passport.authenticate('jwt', { session: false });
 app.get('/api/protected', jwtAuth, (req, res) => {
   return res.json({ data: 'rosebud' });
-}
-);
+});
 
 app.use('*', (req, res) => {
   return res.status(404).json({ message: 'Not Found' });
