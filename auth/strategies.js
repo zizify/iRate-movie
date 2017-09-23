@@ -1,6 +1,5 @@
 'use strict';
 
-const passport = require('passport');
 const {BasicStrategy} = require('passport-http');
 const {
   // Assigns the Strategy export to the name JwtStrategy using object
