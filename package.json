@@ -2,7 +2,7 @@
   "name": "node-basic-auth",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "mocha"
@@ -14,7 +14,6 @@
     "bcryptjs": "^2.4.0",
     "body-parser": "^1.15.2",
     "cors": "^2.8.4",
-    "dotenv": "^4.0.0",
     "express": "^4.14.0",
     "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.7.4",
