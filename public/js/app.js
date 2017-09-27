@@ -36,7 +36,7 @@ jQuery(function ($) {
 
     // Simple token refresher
     timer: {            // timer to track token expiration
-      status: null,     // current status: ok | warning | expires
+      status: null,     // current status: ok | warning | expired
       warning: 60000,   // inactivity warning threshold in ms
       remaining: null,  // calculated remaining until expire ms
       polling: 1000,    // frequency to checkExpiry in ms
