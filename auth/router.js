@@ -15,11 +15,14 @@ const createAuthToken = function(user) {
   });
 };
 
-const basicAuth = passport.authenticate('basic', { session: false });
-const jwtAuth = passport.authenticate('jwt', { session: false });
+const basicAuth = passport.authenticate('basic', { session: false, failWithError: true  });
+const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
 
 router.post('/login', basicAuth, (req, res) => {
   const authToken = createAuthToken(req.user.apiRepr());
+
+  logTokenDate(authToken);
+  
   res.json({ authToken });
 });
 
@@ -29,3 +32,11 @@ router.post('/refresh', jwtAuth, (req, res) => {
 });
 
 module.exports = { router };
+
+
+function logTokenDate(token) {
+  const decoded = jwt.verify(token, config.JWT_SECRET);
+  var d = new Date(0);
+  d.setUTCSeconds(decoded.exp); 
+  console.log(d.toLocaleString());
+}

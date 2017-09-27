@@ -14,7 +14,7 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Protected endpoint', function () {
+describe.skip('Protected endpoint', function () {
   const username = 'exampleUser';
   const password = 'examplePass';
 
