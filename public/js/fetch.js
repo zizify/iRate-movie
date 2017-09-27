@@ -11,9 +11,10 @@
  * 
  */
 
-const ITEMS_URL = '/api/items/';
+const ITEMS_URL = '/api/things/';
 const USERS_URL = '/api/users/';
 const LOGIN_URL = '/api/auth/login/';
+const REFRESH_URL = '/api/auth/refresh/';
 
 function buildUrl(path, query) {
   var url = new URL(path, window.location.origin);
@@ -72,8 +73,18 @@ var api = {
     }).then(normalizeResponseErrors)
       .then(res => res.json());
   },
+  refresh: function (token) {
+    const url = buildUrl(REFRESH_URL);
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    }).then(normalizeResponseErrors)
+      .then(res => res.json());
+  },  
   search: function (query) {
-    console.log('query', query);
     const url = buildUrl(ITEMS_URL, query);
 
     return fetch(url, {
@@ -134,7 +145,7 @@ var api = {
       }
     }).then(normalizeResponseErrors)
       .then(res => res.text());
-  },
+  }
 };
 
 
