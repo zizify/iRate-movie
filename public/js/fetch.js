@@ -35,7 +35,7 @@ function normalizeResponseErrors(res) {
     }
     // It's a less informative error returned by express
     return Promise.reject({
-      code: res.status,
+      status: res.status,
       message: res.statusText
     });
   }
