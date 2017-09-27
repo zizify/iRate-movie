@@ -204,7 +204,6 @@ var handle = {
         console.error(err);
       });
   },
-
   viewCreate: function (event) {
     event.preventDefault();
     const state = event.data;
