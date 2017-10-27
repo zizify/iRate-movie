@@ -21,9 +21,9 @@ var handle = {
         render.page(state);
       }).catch(err => {
         if (err.reason === 'ValidationError') {
-          console.error(err.reason, err.message);
+          console.error('ERROR:', err.reason, err.message);
         } else {
-          console.error(err);
+          console.error('ERROR:', err);
         }
       });
   },
@@ -45,9 +45,9 @@ var handle = {
       }).catch(err => {
         state.action = null;
         if (err.reason === 'ValidationError') {
-          console.error(err.reason, err.message);
+          console.error('ERROR:', err.reason, err.message);
         } else {
-          console.error(err);
+          console.error('ERROR:', err);
         }
       });
   },
@@ -65,7 +65,7 @@ var handle = {
         }).catch(err => {
           state.token = null; // remove expired token
           localStorage.removeItem('authToken');
-          console.error(err);
+          console.error('ERROR:', err);
         });
     }
   },
@@ -112,7 +112,7 @@ var handle = {
         state.view = 'search';
         render.page(state);
       }).catch(err => {
-        console.error(err);
+        console.error('ERROR:', err);
       });
   },
 
@@ -137,7 +137,7 @@ var handle = {
           state.view = 'signup';
           render.page(state);
         }
-        console.error(err);
+        console.error('ERROR:', err);
       });
   },
 
@@ -163,7 +163,7 @@ var handle = {
           state.view = 'signup';
           render.page(state);
         }
-        console.error(err);
+        console.error('ERROR:', err);
       });
   },
 
@@ -201,7 +201,7 @@ var handle = {
           state.view = 'signup';
           render.page(state);
         }
-        console.error(err);
+        console.error('ERROR:', err);
       });
   },
   viewCreate: function (event) {

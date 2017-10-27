@@ -6,7 +6,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const { User } = require('../users/models');
 const { JWT_SECRET } = require('../config');
 
-const basicStrategy = new BasicStrategy((username, password, callback) => {
+const basicStrategy = new BasicStrategy((username, password, done) => {
   let user;
   User.findOne({ username: username })
     .then(_user => {
@@ -26,13 +26,14 @@ const basicStrategy = new BasicStrategy((username, password, callback) => {
           message: 'Incorrect username or password'
         });
       }
-      return callback(null, user);
+      return done(null, user);
     })
     .catch(err => {
+      console.log(err);
       if (err.reason === 'LoginError') {
-        return callback(null, false, err);
+        return done(null, false, err);
       }
-      return callback(err, false);
+      return done(err, false);
     });
 });
 
